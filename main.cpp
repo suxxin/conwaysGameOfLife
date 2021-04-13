@@ -7,8 +7,8 @@
 #include <random>
 #include <chrono>
 
-#define N 100
-#define M 100
+#define N 5
+#define M 5
 
 // forward declaration
 static void print_board(int n, int m, int k, std::vector< std::vector<int> > *board,std::vector< std::vector<int> > *neighbours);

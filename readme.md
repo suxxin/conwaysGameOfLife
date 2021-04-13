@@ -1,5 +1,7 @@
 Command line argument로 유저에게 인풋 받기
 
+프로그램 실행 방법: ./main $1 $2
+
 Input file format:
 줄마다 row col 형식으로 fill-in할 cell을 명시
 
