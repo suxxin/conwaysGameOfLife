@@ -7,8 +7,8 @@
 #include <random>
 #include <chrono>
 
-#define N 5
-#define M 5
+#define N 100
+#define M 100
 
 // forward declaration
 static void print_board(int n, int m, int k, std::vector< std::vector<int> > *board,std::vector< std::vector<int> > *neighbours);
@@ -37,7 +37,7 @@ static void inc_neighbour(int r, int c, std::vector< std::vector<int> > *neighbo
     for (int i = 0; i < 8; i++) {
         if (r+y[i] < 0 || r+y[i] >= M) continue;
         if (c+x[i] < 0 || c+x[i] >= N) continue;
-        neighbours->at(r+y[i])[c+x[i]] += 1;
+        neighbours->at(c+x[i])[r+y[i]] += 1;
     }
 }
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
             ss >> col;
             int r = stoi(row);
             int c = stoi(col);
-            board[r][c] = 1;
+            board[c][r] = 1;
             // increase neighbour count
             inc_neighbour(r,c,&neighbours);
         }
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
                 r = gen_rand[i] / n;
                 c = gen_rand[i] % n - 1;
             }
-            board[r][c] = 1;
+            board[c][r] = 1;
             // increase neighbour count
             inc_neighbour(r,c,&neighbours);
         }
@@ -138,23 +138,23 @@ static void next_gen(int n, int m, std::vector< std::vector<int> > *board, std::
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             // for efficiency, skip cells that are dead with no live neighbours
-            if (board->at(i)[j] == 0 && neighbours->at(i)[j] == 0) 
+            if (board->at(j)[i] == 0 && neighbours->at(j)[i] == 0) 
                 continue;
             // else, apply the rules of life
-            if (board->at(i)[j] == 1 && neighbours->at(i)[j] < 2) {
+            if (board->at(j)[i] == 1 && neighbours->at(j)[i] < 2) {
                 // too lonely, dies
-                board->at(i)[j] = 0;
-            } else if (board->at(i)[j] == 1 && neighbours->at(i)[j] > 3) {
+                board->at(j)[i] = 0;
+            } else if (board->at(j)[i] == 1 && neighbours->at(j)[i] > 3) {
                 // overpopulation, dies
-                board->at(i)[j] = 0;
-            } else if (board->at(i)[j] == 0 && neighbours->at(i)[j] == 3) {
+                board->at(j)[i] = 0;
+            } else if (board->at(j)[i] == 0 && neighbours->at(j)[i] == 3) {
                 // new born cell
-                board->at(i)[j] = 1;
+                board->at(j)[i] = 1;
                 // new neighbour status
                 inc_neighbour(i,j,&new_neighbours);
             } else {
                 // remains the same
-                if (board->at(i)[j] == 1) {
+                if (board->at(j)[i] == 1) {
                     // only increase the new neighbour if alive
                     inc_neighbour(i,j,&new_neighbours);
                 }
@@ -172,7 +172,7 @@ static void print_board(int n, int m, int k, std::vector< std::vector<int> > *bo
 
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
-            if (board->at(i)[j] == 0) {
+            if (board->at(j)[i] == 0) {
                 std::cout << "-";
             } else {
                 std::cout << "*";
