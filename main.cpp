@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 #define N 100;
 #define M 100;
@@ -36,8 +37,8 @@ int main(int argc, char **argv) {
     std::string first_arg(argv[1]);
     std::string second_arg(argv[2]);
 
-    std::vector< std::vector<int> > board;
-
+    std::vector< std::vector<int> > board(n, std::vector<int>(m));
+    
     // 1. Input 파일 제공: filename.txt, generation k 입력
     if (!is_number(first_arg) && is_number(second_arg)) {
         // handles input file
@@ -47,9 +48,19 @@ int main(int argc, char **argv) {
             invalid_arg();
             return 0;
         }
+        
         std::string input;
         while (getline(input_file, input)) {
             // initialize the board while reading the input file
+            std::string row, col;
+            std::istringstream ss(input);
+            ss >> row;
+            ss >> col;
+            int r = stoi(row);
+            int c = stoi(col);
+
+            board[r][c] = 1;
+
         }
         input_file.close();
     }
