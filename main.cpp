@@ -3,9 +3,12 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <algorithm>
+#include <random>
+#include <chrono>
 
-#define N 100;
-#define M 100;
+#define N 5;
+#define M 5;
 
 // forward declaration
 static void print_board(int n, int m, int k, std::vector< std::vector<int> > *board);
@@ -58,16 +61,44 @@ int main(int argc, char **argv) {
             ss >> col;
             int r = stoi(row);
             int c = stoi(col);
-
             board[r][c] = 1;
-
         }
         input_file.close();
     }
     // 2. Input 파일 미제공: number of living cell N, generation k 입력
     else if (is_number(first_arg) && is_number(second_arg)) {
-        // n개의 랜덥 Cell의 초기 보드 initialize
-        int n = std::stoi(first_arg);
+        // n개의 랜덤 Cell의 초기 보드 initialize
+        int nn = std::stoi(first_arg);
+        // generate n distinct random numbers between 1 and NxM
+        int range = n * m;
+        std::vector<int> gen_rand;
+        for (int i = 1; i < range; i++) {
+            gen_rand.push_back(i);
+        }
+        // random shuffle
+        unsigned seed = std::chrono::system_clock::now()
+                        .time_since_epoch()
+                        .count();
+        std::shuffle(gen_rand.begin(), gen_rand.end(), std::default_random_engine(seed));
+        // extract the first nn element
+        gen_rand.resize(nn);
+
+        for (int i = 0; i < nn; i++) {
+            // fill in the cells corresponding to the randomly generated number 
+            int r,c;
+            if (gen_rand[i] % n == 0) {
+                r = gen_rand[i] / n - 1;
+                c = n - 1;
+            } else {
+                r = gen_rand[i] / n;
+                c = gen_rand[i] % n - 1;
+            }
+            board[r][c] = 1;
+        }
+    }
+    else {
+        invalid_arg();
+        return 0;
     }
 
     // print the init board
@@ -82,8 +113,8 @@ int main(int argc, char **argv) {
 static void print_board(int n, int m, int k, std::vector< std::vector<int> > *board) {
     // Algorithm
 
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
             if (board->at(i)[j] == 0) {
                 std::cout << "-";
             } else {
